@@ -1,0 +1,5 @@
+.agent/
+debug_*.js
+pomodoro_backup/
+.DS_Store
+Thumbs.db
