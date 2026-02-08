@@ -882,16 +882,37 @@ async function initMelonTop4() {
     melonGrid.innerHTML = '<p style="color:#777; width:100%;">Melon Top 100 불러오는 중... 🍈</p>';
 
     // Mock Data for Melon Top (Latest K-Pop Hits)
+    // Mock Data for Melon Top (Pool of 20+ Hits) - Randomized
     const melonPicks = [
-        { query: "Rosé APT.", desc: "Melon #1" },
-        { query: "aespa Whiplash", desc: "Melon #2" },
-        { query: "G-Dragon Power", desc: "Melon #3" },
-        { query: "Jennie Mantra", desc: "Melon #4" }
+        { query: "Rosé APT.", desc: "Melon Hot" },
+        { query: "aespa Whiplash", desc: "Melon Hot" },
+        { query: "G-Dragon Power", desc: "Melon Hot" },
+        { query: "Jennie Mantra", desc: "Melon Hot" },
+        { query: "ILLIT Cherish (My Love)", desc: "Melon Hot" },
+        { query: "QWER My Name is Malguem", desc: "Melon Hot" },
+        { query: "DAY6 Melt Down", desc: "Melon Hot" },
+        { query: "Lee Young Ji Small Girl", desc: "Melon Hot" },
+        { query: "NewJeans How Sweet", desc: "Melon Hot" },
+        { query: "IVE Accendio", desc: "Melon Hot" },
+        { query: "TWS plot twist", desc: "Melon Hot" },
+        { query: "Eclipse Sudden Shower", desc: "Melon Hot" },
+        { query: "Zico Spot!", desc: "Melon Hot" },
+        { query: "BIBI Bam Yang Gang", desc: "Melon Hot" },
+        { query: "LE SSERAFIM Crazy", desc: "Melon Hot" },
+        { query: "KISS OF LIFE Sticky", desc: "Melon Hot" },
+        { query: "Crush Hmm-cheat", desc: "Melon Hot" },
+        { query: "Taeyeon To. X", desc: "Melon Hot" },
+        { query: "AKMU Hero", desc: "Melon Hot" },
+        { query: "RIIZE Boom Boom Bass", desc: "Melon Hot" }
     ];
+
+    // Randomize and select 4
+    const shuffled = melonPicks.sort(() => 0.5 - Math.random());
+    const candidates = shuffled.slice(0, 4);
 
     melonGrid.innerHTML = '';
 
-    for (const pick of melonPicks) {
+    for (const pick of candidates) {
         try {
             const url = `https://itunes.apple.com/search?term=${encodeURIComponent(pick.query)}&entity=song&limit=1`;
             const resp = await fetch(url);
@@ -935,16 +956,37 @@ async function initBillboardTop4() {
     billboardGrid.innerHTML = '<p style="color:#777; width:100%;">Billboard Hot 100 불러오는 중... 🇺🇸</p>';
 
     // Mock Data for Billboard Hot 100 (Latest Global Hits)
+    // Mock Data for Billboard Hot 100 (Pool of 20+ Hits) - Randomized
     const billboardPicks = [
-        { query: "Shaboozey A Bar Song (Tipsy)", desc: "Billboard #1" },
-        { query: "Lady Gaga Bruno Mars Die With A Smile", desc: "Billboard #2" },
-        { query: "Billie Eilish Birds of a Feather", desc: "Billboard #3" },
-        { query: "Sabrina Carpenter Espresso", desc: "Billboard #4" }
+        { query: "Shaboozey A Bar Song (Tipsy)", desc: "Billboard Hot" },
+        { query: "Lady Gaga Bruno Mars Die With A Smile", desc: "Billboard Hot" },
+        { query: "Billie Eilish Birds of a Feather", desc: "Billboard Hot" },
+        { query: "Sabrina Carpenter Espresso", desc: "Billboard Hot" },
+        { query: "Post Malone I Had Some Help", desc: "Billboard Hot" },
+        { query: "Kendrick Lamar Not Like Us", desc: "Billboard Hot" },
+        { query: "Chappell Roan Good Luck, Babe!", desc: "Billboard Hot" },
+        { query: "Tommy Richman Million Dollar Baby", desc: "Billboard Hot" },
+        { query: "Hozier Too Sweet", desc: "Billboard Hot" },
+        { query: "Benson Boone Beautiful Things", desc: "Billboard Hot" },
+        { query: "Teddy Swims Lose Control", desc: "Billboard Hot" },
+        { query: "Future Metro Boomin Like That", desc: "Billboard Hot" },
+        { query: "SZA Saturn", desc: "Billboard Hot" },
+        { query: "Ariana Grande We Can't Be Friends", desc: "Billboard Hot" },
+        { query: "Jack Harlow Lovin On Me", desc: "Billboard Hot" },
+        { query: "Tate McRae Greedy", desc: "Billboard Hot" },
+        { query: "Taylor Swift Fortnight", desc: "Billboard Hot" },
+        { query: "Doja Cat Paint The Town Red", desc: "Billboard Hot" },
+        { query: "Miley Cyrus Flowers", desc: "Billboard Hot" },
+        { query: "Morgan Wallen Last Night", desc: "Billboard Hot" }
     ];
+
+    // Randomize and select 4
+    const shuffled = billboardPicks.sort(() => 0.5 - Math.random());
+    const candidates = shuffled.slice(0, 4);
 
     billboardGrid.innerHTML = '';
 
-    for (const pick of billboardPicks) {
+    for (const pick of candidates) {
         try {
             const url = `https://itunes.apple.com/search?term=${encodeURIComponent(pick.query)}&entity=song&limit=1`;
             const resp = await fetch(url);
