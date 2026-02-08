@@ -25,6 +25,101 @@ searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
 
+// Barcode Scan Logic
+const scanBtn = document.getElementById('scan-btn');
+const scannerModal = document.getElementById('scanner-modal');
+const closeScannerBtn = document.getElementById('close-scanner');
+let html5QrcodeScanner = null;
+
+if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
+        scannerModal.classList.remove('hidden');
+        startScanner();
+    });
+}
+
+if (closeScannerBtn) {
+    closeScannerBtn.addEventListener('click', () => {
+        stopScanner();
+        scannerModal.classList.add('hidden');
+    });
+}
+
+function startScanner() {
+    if (html5QrcodeScanner) return; // Already running
+
+    // Use Html5QrcodeScanner for UI simplicity
+    html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }
+    );
+
+    html5QrcodeScanner.render(onScanSuccess);
+}
+
+function stopScanner() {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(error => {
+            console.error("Failed to clear html5QrcodeScanner. ", error);
+        });
+        html5QrcodeScanner = null;
+    }
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    // Handle on success condition with the decoded text or result.
+    console.log(`Scan result: ${decodedText}`, decodedResult);
+
+    // Stop scanning
+    stopScanner();
+    scannerModal.classList.add('hidden');
+
+    // Search by UPC
+    fetchAlbumByUPC(decodedText);
+}
+
+async function fetchAlbumByUPC(upc) {
+    // Clean UPC (remove leading zeros if necessary, or try as is)
+    // iTunes Lookup by UPC
+    const url = `https://itunes.apple.com/lookup?upc=${upc}&entity=album`;
+
+    // UI Feedback
+    const albumGrid = document.getElementById('album-grid');
+    albumGrid.innerHTML = `<p style="color:#777;">바코드(${upc})로 검색 중...</p>`;
+
+    try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (data.results && data.results.length > 0) {
+            const album = data.results[0];
+
+            // Trigger Display
+            // Hide Home Sections
+            document.getElementById('gimbab-section')?.classList.add('hidden');
+            document.getElementById('month-section')?.classList.add('hidden');
+            document.getElementById('melon-section')?.classList.add('hidden');
+            document.getElementById('billboard-section')?.classList.add('hidden');
+
+            // Show Results
+            document.getElementById('albums-title').classList.remove('hidden');
+            albumGrid.innerHTML = '';
+
+            // Use existing createAlbumCard to display result
+            const card = createAlbumCard(album, album.artistName);
+            albumGrid.appendChild(card);
+
+            // Allow user to explore artist from here
+            // We can optionally fetch artist bio too, but for now just showing the album is good.
+        } else {
+            alert(`바코드(${upc})에 해당하는 앨범을 찾을 수 없습니다. 😢`);
+            albumGrid.innerHTML = '';
+        }
+    } catch (e) {
+        console.error("UPC Fetch Error", e);
+        alert("검색 중 오류가 발생했습니다.");
+    }
+}
+
 async function handleSearch() {
     const query = searchInput.value.trim();
     if (!query) {

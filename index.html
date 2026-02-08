@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body>
@@ -22,6 +23,7 @@
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="당신의 아티스트를 찾아보세요 (예: Queen)">
                 <button id="search-btn">Search</button>
+                <button id="scan-btn" title="바코드 스캔">📷</button>
             </div>
 
             <!-- Gimbab Records Recommendation -->
@@ -143,4 +145,11 @@
     <script src="script.js"></script>
 </body>
 
-</html>
+</html>    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="hidden">
+        <div class="scanner-content">
+            <button id="close-scanner">❌ 닫기</button>
+            <div id="reader"></div>
+            <p style="text-align: center; color: #fff; margin-top: 10px;">앨범 뒷면의 바코드를 비춰주세요!</p>
+        </div>
+    </div>

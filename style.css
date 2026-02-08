@@ -626,3 +626,62 @@ footer {
         width: 90%;
     }
 }
+
+/* Scanner Styles */
+#scan-btn {
+    padding: 12px 15px;
+    background-color: #ff9800; /* Orange for distinction */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-left: 10px;
+    transition: transform 0.2s ease;
+}
+
+#scan-btn:hover {
+    transform: scale(1.1);
+    background-color: #f57c00;
+}
+
+#scanner-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.scanner-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+}
+
+#reader {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#close-scanner {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
