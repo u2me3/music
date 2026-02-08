@@ -853,7 +853,132 @@ window.addEventListener('DOMContentLoaded', () => {
     // We want them visible on load
     if (gimbabSection) gimbabSection.classList.remove('hidden');
     if (monthSection) monthSection.classList.remove('hidden');
+
+    // Logo Click to Reset/Home
+    const logo = document.querySelector('.logo h1');
+    if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.onclick = () => {
+            window.location.reload();
+        };
+    }
+
+    // Initialize New Charts
+    initMelonTop4();
+    initBillboardTop4();
+
+    // Check visibility for new sections
+    const melonSection = document.getElementById('melon-section');
+    const billboardSection = document.getElementById('billboard-section');
+    if (melonSection) melonSection.classList.remove('hidden');
+    if (billboardSection) billboardSection.classList.remove('hidden');
 });
+
+// Melon Top 4 Logic
+async function initMelonTop4() {
+    const melonGrid = document.getElementById('melon-grid');
+    if (!melonGrid) return;
+
+    melonGrid.innerHTML = '<p style="color:#777; width:100%;">Melon Top 100 불러오는 중... 🍈</p>';
+
+    // Mock Data for Melon Top (Latest K-Pop Hits)
+    const melonPicks = [
+        { query: "Rosé APT.", desc: "Melon #1" },
+        { query: "aespa Whiplash", desc: "Melon #2" },
+        { query: "G-Dragon Power", desc: "Melon #3" },
+        { query: "Jennie Mantra", desc: "Melon #4" }
+    ];
+
+    melonGrid.innerHTML = '';
+
+    for (const pick of melonPicks) {
+        try {
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(pick.query)}&entity=song&limit=1`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (data.results.length > 0) {
+                const song = data.results[0];
+                const card = document.createElement('div');
+                card.className = 'gimbab-card';
+
+                const highResArt = song.artworkUrl100.replace('100x100', '400x400');
+
+                card.innerHTML = `
+                    <div style="position:relative;">
+                        <img src="${highResArt}" alt="${song.trackName}">
+                        <div style="position:absolute; top:10px; left:10px; background:#00cd3c; color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">Melon Hot</div>
+                    </div>
+                    <div class="gimbab-title" title="${song.trackName}">${song.trackName}</div>
+                    <div class="gimbab-artist">${song.artistName}</div>
+                `;
+
+                card.onclick = () => {
+                    const ytmQuery = `${song.artistName} ${song.trackName}`;
+                    const ytmLink = `https://music.youtube.com/search?q=${encodeURIComponent(ytmQuery)}`;
+                    window.open(ytmLink, '_blank');
+                };
+
+                melonGrid.appendChild(card);
+            }
+        } catch (e) {
+            console.warn("Melon Fetch Error", e);
+        }
+    }
+}
+
+// Billboard Hot 100 Logic
+async function initBillboardTop4() {
+    const billboardGrid = document.getElementById('billboard-grid');
+    if (!billboardGrid) return;
+
+    billboardGrid.innerHTML = '<p style="color:#777; width:100%;">Billboard Hot 100 불러오는 중... 🇺🇸</p>';
+
+    // Mock Data for Billboard Hot 100 (Latest Global Hits)
+    const billboardPicks = [
+        { query: "Shaboozey A Bar Song (Tipsy)", desc: "Billboard #1" },
+        { query: "Lady Gaga Bruno Mars Die With A Smile", desc: "Billboard #2" },
+        { query: "Billie Eilish Birds of a Feather", desc: "Billboard #3" },
+        { query: "Sabrina Carpenter Espresso", desc: "Billboard #4" }
+    ];
+
+    billboardGrid.innerHTML = '';
+
+    for (const pick of billboardPicks) {
+        try {
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(pick.query)}&entity=song&limit=1`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (data.results.length > 0) {
+                const song = data.results[0];
+                const card = document.createElement('div');
+                card.className = 'gimbab-card';
+
+                const highResArt = song.artworkUrl100.replace('100x100', '400x400');
+
+                card.innerHTML = `
+                    <div style="position:relative;">
+                        <img src="${highResArt}" alt="${song.trackName}">
+                        <div style="position:absolute; top:10px; left:10px; background:#1db954; color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">Billboard Hot</div>
+                    </div>
+                    <div class="gimbab-title" title="${song.trackName}">${song.trackName}</div>
+                    <div class="gimbab-artist">${song.artistName}</div>
+                `;
+
+                card.onclick = () => {
+                    const ytmQuery = `${song.artistName} ${song.trackName}`;
+                    const ytmLink = `https://music.youtube.com/search?q=${encodeURIComponent(ytmQuery)}`;
+                    window.open(ytmLink, '_blank');
+                };
+
+                billboardGrid.appendChild(card);
+            }
+        } catch (e) {
+            console.warn("Billboard Fetch Error", e);
+        }
+    }
+}
 
 // Album of the Month Logic
 async function initAlbumOfTheMonth() {
