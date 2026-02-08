@@ -29,13 +29,22 @@ searchInput.addEventListener('keypress', (e) => {
 const scanBtn = document.getElementById('scan-btn');
 const scannerModal = document.getElementById('scanner-modal');
 const closeScannerBtn = document.getElementById('close-scanner');
-let html5QrcodeScanner = null;
+let html5QrCode = null;
+const readerId = "reader";
+
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 if (scanBtn) {
-    scanBtn.addEventListener('click', () => {
-        scannerModal.classList.remove('hidden');
-        startScanner();
-    });
+    if (!isMobile) {
+        // Hide on PC
+        scanBtn.style.display = 'none';
+        console.log("PC Environment detected: Camera button hidden.");
+    } else {
+        scanBtn.addEventListener('click', () => {
+            scannerModal.classList.remove('hidden');
+            startScanner();
+        });
+    }
 }
 
 if (closeScannerBtn) {
@@ -46,22 +55,38 @@ if (closeScannerBtn) {
 }
 
 function startScanner() {
-    if (html5QrcodeScanner) return; // Already running
+    if (html5QrCode) return; // Already running logic could be improved, but basic check.
 
-    // Use Html5QrcodeScanner for UI simplicity
-    html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }
-    );
+    html5QrCode = new Html5Qrcode(readerId);
 
-    html5QrcodeScanner.render(onScanSuccess);
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+    // Explicitly request camera (this triggers permission prompt)
+    html5QrCode.start(
+        { facingMode: "environment" }, // Prefer back camera
+        config,
+        onScanSuccess,
+        (errorMessage) => {
+            // parse error, ignore for now to avoid console spam on every frame
+        }
+    ).catch(err => {
+        // Start failed, handle it.
+        console.error("Error starting scanner:", err);
+        alert(`카메라를 시작할 수 없습니다.\n\n오류: ${err}\n\n브라우저 권한을 확인해주세요.`);
+        stopScanner();
+        scannerModal.classList.add('hidden');
+    });
 }
 
 function stopScanner() {
-    if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear().catch(error => {
-            console.error("Failed to clear html5QrcodeScanner. ", error);
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            html5QrCode.clear();
+            html5QrCode = null;
+        }).catch(err => {
+            console.error("Failed to stop scanner.", err);
+            html5QrCode = null;
         });
-        html5QrcodeScanner = null;
     }
 }
 
