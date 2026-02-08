@@ -40,11 +40,16 @@ async function handleSearch() {
     albumsTitle.classList.add('hidden');
     singlesTitle.classList.add('hidden');
 
-    // Hide Gimbab Section on Search
+    // Hide Gimbab, Month, Melon, Billboard Sections on Search
     const gimbabSection = document.getElementById('gimbab-section');
-    const monthSection = document.getElementById('month-section'); // New
+    const monthSection = document.getElementById('month-section');
+    const melonSection = document.getElementById('melon-section');
+    const billboardSection = document.getElementById('billboard-section');
+
     if (gimbabSection) gimbabSection.classList.add('hidden');
-    if (monthSection) monthSection.classList.add('hidden'); // Hide Month Section too
+    if (monthSection) monthSection.classList.add('hidden');
+    if (melonSection) melonSection.classList.add('hidden');
+    if (billboardSection) billboardSection.classList.add('hidden');
 
     albumGrid.innerHTML = ''; // Loading placeholder removed to keep it clean or use a spinner
     singleGrid.innerHTML = '';
