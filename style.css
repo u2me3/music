@@ -579,3 +579,50 @@ footer {
         transform: translateY(0);
     }
 }
+/* Mobile Responsiveness Improvements */
+@media (max-width: 768px) {
+    /* Stack Artist Info Vertically */
+    .artist-profile {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    #artist-image {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+    }
+
+    #artist-name {
+        font-size: 2rem;
+    }
+
+    .artist-text-content {
+        width: 100%;
+    }
+
+    /* Adjust Gimbab Grid to 2 Columns */
+    .gimbab-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Adjust Album Grid */
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+    }
+
+    .search-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    input[type='text'] {
+        width: 90%;
+    }
+
+    button#search-btn {
+        width: 90%;
+    }
+}
