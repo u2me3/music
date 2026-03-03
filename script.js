@@ -1000,76 +1000,21 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Melon Top 4 Logic
+// User's YouTube Music Playlist (Top 4 Picks)
 async function initMelonTop4() {
     const melonGrid = document.getElementById('melon-grid');
     if (!melonGrid) return;
 
-    melonGrid.innerHTML = '<p style="color:#777; width:100%;">Melon Top 100 불러오는 중... 🍈</p>';
-
-    // Mock Data for Melon Top (Latest K-Pop Hits)
-    // Mock Data for Melon Top (Pool of 20+ Hits) - Randomized
-    const melonPicks = [
-        { query: "Rosé APT.", desc: "Melon Hot" },
-        { query: "aespa Whiplash", desc: "Melon Hot" },
-        { query: "G-Dragon Power", desc: "Melon Hot" },
-        { query: "Jennie Mantra", desc: "Melon Hot" },
-        { query: "ILLIT Cherish (My Love)", desc: "Melon Hot" },
-        { query: "QWER My Name is Malguem", desc: "Melon Hot" },
-        { query: "DAY6 Melt Down", desc: "Melon Hot" },
-        { query: "Lee Young Ji Small Girl", desc: "Melon Hot" },
-        { query: "NewJeans How Sweet", desc: "Melon Hot" },
-        { query: "IVE Accendio", desc: "Melon Hot" },
-        { query: "TWS plot twist", desc: "Melon Hot" },
-        { query: "Eclipse Sudden Shower", desc: "Melon Hot" },
-        { query: "Zico Spot!", desc: "Melon Hot" },
-        { query: "BIBI Bam Yang Gang", desc: "Melon Hot" },
-        { query: "LE SSERAFIM Crazy", desc: "Melon Hot" },
-        { query: "KISS OF LIFE Sticky", desc: "Melon Hot" },
-        { query: "Crush Hmm-cheat", desc: "Melon Hot" },
-        { query: "Taeyeon To. X", desc: "Melon Hot" },
-        { query: "AKMU Hero", desc: "Melon Hot" },
-        { query: "RIIZE Boom Boom Bass", desc: "Melon Hot" }
+    const playlistPicks = [
+        { query: "KiiiKiii 404 (New Era)", desc: "My Playlist" },
+        { query: "IVE Bang Bang", desc: "My Playlist" },
+        { query: "HWASA Good Goodbye", desc: "My Playlist" },
+        { query: "Car the garden My whole world", desc: "My Playlist" }
     ];
 
-    // Randomize and select 4
-    const shuffled = melonPicks.sort(() => 0.5 - Math.random());
-    const candidates = shuffled.slice(0, 4);
-
     melonGrid.innerHTML = '';
-
-    for (const pick of candidates) {
-        try {
-            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(pick.query)}&entity=song&limit=1`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-
-            if (data.results.length > 0) {
-                const song = data.results[0];
-                const card = document.createElement('div');
-                card.className = 'gimbab-card';
-
-                const highResArt = song.artworkUrl100.replace('100x100', '400x400');
-
-                card.innerHTML = `
-                    <div style="position:relative;">
-                        <img src="${highResArt}" alt="${song.trackName}">
-                        <div style="position:absolute; top:10px; left:10px; background:#00cd3c; color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">Melon Hot</div>
-                    </div>
-                    <div class="gimbab-title" title="${song.trackName}">${song.trackName}</div>
-                    <div class="gimbab-artist">${song.artistName}</div>
-                `;
-
-                card.onclick = () => {
-                    const ytmQuery = `${song.artistName} ${song.trackName}`;
-                    const ytmLink = `https://music.youtube.com/search?q=${encodeURIComponent(ytmQuery)}`;
-                    window.open(ytmLink, '_blank');
-                };
-
-                melonGrid.appendChild(card);
-            }
-        } catch (e) {
-            console.warn("Melon Fetch Error", e);
-        }
+    for (const pick of playlistPicks) {
+        await fetchAndDisplayChartItem(melonGrid, pick.query, pick.desc, '#ff0000');
     }
 }
 
@@ -1080,8 +1025,30 @@ async function initBillboardTop4() {
 
     billboardGrid.innerHTML = '<p style="color:#777; width:100%;">Billboard Hot 100 불러오는 중... 🇺🇸</p>';
 
-    // Mock Data for Billboard Hot 100 (Latest Global Hits)
-    // Mock Data for Billboard Hot 100 (Pool of 20+ Hits) - Randomized
+    // Live Data Fetching for Billboard Hot 100 via GitHub JSON
+    try {
+        const billboardUrl = 'https://raw.githubusercontent.com/KoreanThinker/billboard-json/main/billboard-hot-100/recent.json';
+        const response = await fetch(billboardUrl);
+        const chartData = await response.json();
+
+        if (chartData && chartData.data && chartData.data.length > 0) {
+            // Data format: { name, artist, rank, etc. }
+            const rawPicks = chartData.data.slice(0, 30); // Top 30
+            const shuffled = rawPicks.sort(() => 0.5 - Math.random());
+            const candidates = shuffled.slice(0, 4);
+
+            billboardGrid.innerHTML = '';
+
+            for (const pick of candidates) {
+                await fetchAndDisplayChartItem(billboardGrid, `${pick.artist} ${pick.name}`, 'Billboard Hot', '#1db954');
+            }
+            return; // Successfully loaded live data
+        }
+    } catch (e) {
+        console.warn("Live Billboard Fetch Failed, falling back to cached list.", e);
+    }
+
+    // Fallback to Mock Data if API fails
     const billboardPicks = [
         { query: "Shaboozey A Bar Song (Tipsy)", desc: "Billboard Hot" },
         { query: "Lady Gaga Bruno Mars Die With A Smile", desc: "Billboard Hot" },
@@ -1090,19 +1057,7 @@ async function initBillboardTop4() {
         { query: "Post Malone I Had Some Help", desc: "Billboard Hot" },
         { query: "Kendrick Lamar Not Like Us", desc: "Billboard Hot" },
         { query: "Chappell Roan Good Luck, Babe!", desc: "Billboard Hot" },
-        { query: "Tommy Richman Million Dollar Baby", desc: "Billboard Hot" },
-        { query: "Hozier Too Sweet", desc: "Billboard Hot" },
-        { query: "Benson Boone Beautiful Things", desc: "Billboard Hot" },
-        { query: "Teddy Swims Lose Control", desc: "Billboard Hot" },
-        { query: "Future Metro Boomin Like That", desc: "Billboard Hot" },
-        { query: "SZA Saturn", desc: "Billboard Hot" },
-        { query: "Ariana Grande We Can't Be Friends", desc: "Billboard Hot" },
-        { query: "Jack Harlow Lovin On Me", desc: "Billboard Hot" },
-        { query: "Tate McRae Greedy", desc: "Billboard Hot" },
-        { query: "Taylor Swift Fortnight", desc: "Billboard Hot" },
-        { query: "Doja Cat Paint The Town Red", desc: "Billboard Hot" },
-        { query: "Miley Cyrus Flowers", desc: "Billboard Hot" },
-        { query: "Morgan Wallen Last Night", desc: "Billboard Hot" }
+        { query: "Benson Boone Beautiful Things", desc: "Billboard Hot" }
     ];
 
     // Randomize and select 4
@@ -1273,5 +1228,41 @@ async function initAlbumOfTheMonth() {
         };
 
         monthGrid.appendChild(card);
+    }
+}
+
+// Helper: Fetch and Display a single item in our grid format
+async function fetchAndDisplayChartItem(gridElement, searchQuery, badgeText, badgeColor) {
+    try {
+        const url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchQuery)}&entity=song&limit=1`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (data.results.length > 0) {
+            const song = data.results[0];
+            const card = document.createElement('div');
+            card.className = 'gimbab-card';
+
+            const highResArt = song.artworkUrl100.replace('100x100', '400x400');
+
+            card.innerHTML = `
+                <div style="position:relative;">
+                    <img src="${highResArt}" alt="${song.trackName}">
+                    <div style="position:absolute; top:10px; left:10px; background:${badgeColor}; color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">${badgeText}</div>
+                </div>
+                <div class="gimbab-title" title="${song.trackName}">${song.trackName}</div>
+                <div class="gimbab-artist">${song.artistName}</div>
+            `;
+
+            card.onclick = () => {
+                const ytmQuery = `${song.artistName} ${song.trackName}`;
+                const ytmLink = `https://music.youtube.com/search?q=${encodeURIComponent(ytmQuery)}`;
+                window.open(ytmLink, '_blank');
+            };
+
+            gridElement.appendChild(card);
+        }
+    } catch (e) {
+        console.warn(`Chart Item Fetch Error: ${searchQuery}`, e);
     }
 }
